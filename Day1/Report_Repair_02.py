@@ -1,9 +1,11 @@
-with open('input.txt', 'r') as f:
+input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day1\input.txt'
+
+with open(input, 'r') as f:
     data = [int(i) for i in f.read().split()]
 
 data.sort()
 
-print(data)
+# print(data)
 
 answer = 0
 index = 0
