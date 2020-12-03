@@ -14,14 +14,12 @@ class Toboggan:
 
     def inspect_current_pos(self):
         self.char = self.map[self.current_pos[0]][self.current_pos[1] % self.width]
-        # print(self.char, self.current_pos)
         
         if self.char == '#':
             self.trees.append('X')
 
     def traverse(self):
         while self.current_pos[0] <= self.ht:
-            # print(self.current_pos[0], self.ht)
             self.inspect_current_pos()
             self.upd_pos()
       
@@ -45,5 +43,5 @@ path3.traverse()
 path4.traverse()
 path5.traverse()
 
-total = path1.tree_count() * path2.tree_count() * path3.tree_count() * path4.tree_count() * path5.tree_count()
-print(total)
+product = path1.tree_count() * path2.tree_count() * path3.tree_count() * path4.tree_count() * path5.tree_count()
+print(product)
