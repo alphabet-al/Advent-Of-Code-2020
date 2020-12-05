@@ -32,7 +32,7 @@ for i in pass_list:
                     ('in' in i.get('hgt') and int(i.get('hgt')[:-2]) >= 59 and int(i.get('hgt')[:-2]) <= 76):
                         if len(i.get('hcl')) == 7 and r.match(i.get('hcl')):
                             if len(i.get('ecl')) == 3 and i.get('ecl') in ecl_type:
-                                if len(i.get('pid')) == 9 and re.match('\d{9}', i.get('pid')):
+                                if len(i.get('pid')) == 9 and re.match(r'\d{9}', i.get('pid')):
                                     count += 1
     
 print(count)
