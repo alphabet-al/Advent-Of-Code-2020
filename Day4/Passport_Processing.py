@@ -16,13 +16,23 @@ for i in x:
              for element in i.split())) 
     pass_list.append(idx)
 
-count = 0
+# for loop to check if valid keys are in each passenger
 
+count = 0
 for i in pass_list:
     if all(k in i for k in check):
-        
-        count += 1
-
+        if int(i.get('byr')) >= 1920 and int(i.get('byr')) <= 2002:
+            if int(i.get('iyr')) >= 2010 and int(i.get('iyr')) <= 2020:
+                if int(i.get('eyr')) >= 2020 and int(i.get('eyr')) <= 2030:
+                    if ('cm' in i.get('hgt') and int(i.get('hgt')[:-2]) >= 150 and int(i.get('hgt')[:-2]) <= 193) or \
+                    ('in' in i.get('hgt') and int(i.get('hgt')[:-2]) >= 59 and int(i.get('hgt')[:-2]) <= 76):
+                        if i.get('hcl')
+                        
+                        
+                        
+                        
+                        count += 1
+    
 print(count)
 '''
 byr (Birth Year) - four digits; at least 1920 and at most 2002.
