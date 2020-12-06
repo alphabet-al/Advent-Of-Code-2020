@@ -16,16 +16,23 @@ def group_match(group_list):
 
     return gcount
 
-data = [['atxmhdzkjgivwcqu', 'conirfdgplhvsa', 'ghbvdefsaniyc'], ['c', 'c', 'cas', 'xc', 'cz'], ['sdxtfzo', 'stfzno'], ['t', 't', 't', 't', 't']]
-# data = [['c', 'c', 'cas', 'xc', 'cz']]
+# data = [['atxmhdzkjgivwcqu', 'conirfdgplhvsa', 'ghbvdefsaniyc'], ['c', 'c', 'cas', 'xc', 'cz'], ['sdxtfzo', 'stfzno'], ['t', 't', 't', 't', 't']]
+data = ['c', 'c', 'cas', 'xc', 'cz']
 # data = [['sdxtfzo', 'stfzno']]
 # data = [['t', 't', 't', 't', 't']]
+data1 = []
 
+for i in data:
+    data1.append(set(i))
+
+print(data1)
 
 
 ch = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', \
         'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] 
 
-gcount = group_match(data)
+# gcount = group_match(data)
 
-print('Sum of all questions answered "YES" in a group: {0}'.format(gcount))
+shared_ans = set.intersection(*data1)
+print(shared_ans)
+#print('Sum of all questions answered "YES" in a group: {0}'.format(gcount))
