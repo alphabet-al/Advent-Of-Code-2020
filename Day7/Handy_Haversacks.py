@@ -42,19 +42,14 @@ input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day7\bag_data.t
 
 with open( input, 'r') as f:
     bag_rules = [chunk.split(' contain ') for chunk in f.read().split('\n')]
-    # bag_rules = [[re.sub(r' bag[s. ]+', '', chunk)] for chunk in f.read().split('\n')]
 
 bag_rules_beta = []
 
 for i in bag_rules:
     temp = []
     for j in i:
-        # print(j)
         temp.append(re.sub(r' bag[s. ]+', '', j))
-        # bag_rules_beta.append([re.sub(r' bag[s. ]+', '', i)])
     bag_rules_beta.append(temp)
-
-# print(bag_rules_beta)
 
 class Bag:
     def __init__(self, color, contents):
@@ -69,32 +64,37 @@ class Bag:
         if query in self.dict.keys():
             return self.color
 
-twilight = Bag('rainbow', '2 striped silver, 4 mirrored maroon, 5 shiny gold, 1 dotted gold')
 
-# print(twilight.contents)
-# print(twilight.dict)
-bags_in_bags = []
-# bags_in_bags.append(twilight.search('shiny_gold'))
-# print(bags_in_bags)
-
+# code to instantiate all bag colors in bag_rules_beta.
 bag_list = [Bag(i.replace(' ','_'),j) for i,j in bag_rules_beta]
 # print(bag_list)
-
-print(bag_list[0].color)
-
 '''
-def primary_baglist(bags):
-    for i in bags:
-        # print(i[0])
-        i[0] = i[0].replace(' ', '_')
-        bag_list.append(i[0])
-
-primary_baglist(bag_rules_beta)
-
-def pop_bags(bl):
-    for i in bl:
-        i = Bag('rainbow', '2 striped silver, 4 mirrored maroon, 5 shiny gold, 1 dotted gold')
-        print(dark_maroon.color)
-
-pop_bags(bag_list)
+for j in bag_list:
+    print(j.color, j.dict)
 '''
+# print(bag_list[79].search('dark_maroon'))
+
+def search_all_bags(searchq):
+    bags_in_bags = [searchq]
+    count = 0
+    loop_counter = 20
+    
+   
+    while len(bags_in_bags) != 0:
+        bags_in_bags_in_bags = bags_in_bags
+        bags_in_bags = []
+
+        # if len(bags_in_bags_in_bags) > 0:
+        if loop_counter > 0:
+            for i in bags_in_bags_in_bags:
+                for j in bag_list:
+                    if j.search(i):
+                        bags_in_bags.append(j)
+                                                          
+
+                count += len(bags_in_bags)
+                loop_counter -= 1
+
+    return count
+  
+print(search_all_bags('shiny_gold'))

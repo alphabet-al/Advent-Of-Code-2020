@@ -16,7 +16,7 @@ print(list2)
 
 list = [[int(i) for i in ss.split(',')] for ss in s.split('|')]
 print(list)
-'''
+
 
 bag_rules = [['dark maroon bags', '2 striped silver bags, 4 mirrored maroon bags, 5 shiny gold bags, 1 dotted gold bag.'],
 ['dark coral bags', '4 pale blue bags, 3 wavy yellow bags, 4 vibrant tan bags, 3 striped purple bags.'],
@@ -34,3 +34,10 @@ for i in bag_rules:
     bag_rules_beta.append(temp)
 
 print(bag_rules_beta)
+'''
+
+
+dict = {'dotted_magenta': 5, 'dark_maroon': 5}
+
+if 'dark_maroon' in dict.keys():
+     print("True")
