@@ -34,6 +34,35 @@ A light red bag, which can hold bright white and muted yellow bags, either of wh
 So, in this example, the number of bag colors that can eventually contain at least one shiny gold bag is 4.
 
 How many bag colors can eventually contain at least one shiny gold bag? (The list of rules is quite long; make sure you get all of it.)
+
+--- Part Two ---
+It's getting pretty expensive to fly these days - not because of ticket prices, but because of the ridiculous number of bags you need to buy!
+
+Consider again your shiny gold bag and the rules from the above example:
+
+faded blue bags contain 0 other bags.
+dotted black bags contain 0 other bags.
+vibrant plum bags contain 11 other bags: 5 faded blue bags and 6 dotted black bags.
+dark olive bags contain 7 other bags: 3 faded blue bags and 4 dotted black bags.
+So, a single shiny gold bag must contain 1 dark olive bag (and the 7 bags within it) plus 2 vibrant plum bags (and the 11 bags within 
+each of those): 1 + 1*7 + 2 + 2*11 = 32 bags!
+
+Of course, the actual rules have a small chance of going several levels deeper than this example; be sure to count all of the bags, 
+even if the nesting becomes topologically impractical!
+
+Here's another example:
+
+shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
+In this example, a single shiny gold bag must contain 126 other bags.
+
+How many individual bags are required inside your single shiny gold bag?
+
 '''
 #######################################################################################################################################
 import re
@@ -64,15 +93,12 @@ class Bag:
         if str(query) in self.dict.keys():
             return self.color
 
+    def look_in_bag(self):
+        return self.dict.items()
+
 
 # code to instantiate all bag colors in bag_rules_beta.
 bag_list = [Bag(i.replace(' ','_'),j) for i,j in bag_rules_beta]
-# print(bag_list)
-'''
-for j in bag_list:
-    print(j.color, j.dict)
-'''
-# print(bag_list[79].search('dark_maroon'))
 
 def search_all_bags(searchq):
     bags_in_bags = [searchq]
@@ -92,9 +118,29 @@ def search_all_bags(searchq):
                     else:
                         continue
 
-            # count += len(bags_in_bags)
-        # print(bags_in_bags)
-
     return len(bag_brain)
   
 print(search_all_bags('shiny_gold'))
+
+def how_many_in_a_bag(q, qty):
+    bag_of_holding = []
+    bag_processing = [(q, qty)]
+    bag_check = 1
+      
+    while len(bag_processing) != 0: 
+        bag_proc_deuce = bag_processing
+        bag_processing = []
+          
+        for k,v in bag_proc_deuce:    
+            for i in bag_list:
+                if str(i) == k:
+                    for j,m in i.look_in_bag():
+                        # if j not in bag_of_holding:
+                            bag_processing.append((j,v*m))
+                            bag_of_holding.append((j,(v*m)))                            
+    count = 0
+    for i in bag_of_holding:
+        count += i[1]
+    return count
+
+print(how_many_in_a_bag('shiny_gold', 1))
