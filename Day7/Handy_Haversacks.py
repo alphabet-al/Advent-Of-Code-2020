@@ -61,7 +61,7 @@ class Bag:
         return '{0}'.format(self.color)
 
     def search(self, query):
-        if query in self.dict.keys():
+        if str(query) in self.dict.keys():
             return self.color
 
 
@@ -76,7 +76,8 @@ for j in bag_list:
 
 def search_all_bags(searchq):
     bags_in_bags = [searchq]
-    count = 0
+    bag_brain = []
+    # count = 0
    
     while len(bags_in_bags) != 0:
         bags_in_bags_in_bags = bags_in_bags
@@ -85,11 +86,15 @@ def search_all_bags(searchq):
         for i in bags_in_bags_in_bags:
             for j in bag_list:
                 if j.search(i):
-                    bags_in_bags.append(j)
+                    if j not in bag_brain:
+                        bags_in_bags.append(j)
+                        bag_brain.append(j)
+                    else:
+                        continue
 
-            count += len(bags_in_bags)
-        print(bags_in_bags)
+            # count += len(bags_in_bags)
+        # print(bags_in_bags)
 
-    return count
+    return len(bag_brain)
   
 print(search_all_bags('shiny_gold'))
