@@ -77,23 +77,18 @@ for j in bag_list:
 def search_all_bags(searchq):
     bags_in_bags = [searchq]
     count = 0
-    loop_counter = 20
-    
    
     while len(bags_in_bags) != 0:
         bags_in_bags_in_bags = bags_in_bags
         bags_in_bags = []
+ 
+        for i in bags_in_bags_in_bags:
+            for j in bag_list:
+                if j.search(i):
+                    bags_in_bags.append(j)
 
-        # if len(bags_in_bags_in_bags) > 0:
-        if loop_counter > 0:
-            for i in bags_in_bags_in_bags:
-                for j in bag_list:
-                    if j.search(i):
-                        bags_in_bags.append(j)
-                                                          
-
-                count += len(bags_in_bags)
-                loop_counter -= 1
+            count += len(bags_in_bags)
+        print(bags_in_bags)
 
     return count
   
