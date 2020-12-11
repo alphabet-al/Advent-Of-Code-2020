@@ -113,7 +113,7 @@ def ins(lst):
     current_index = 0
     traveled = []
 
-    while current_index not in traveled and current_index > 0 or \
+    while current_index not in traveled and current_index >= 0 and \
             current_index not in traveled and current_index < len(lst):
         idx = lst[current_index][0]
         action = lst[current_index][1][0]
@@ -131,11 +131,12 @@ def ins(lst):
         # print('\nYou are stuck in a Loop!\n\nAccumulator value: {0}'.format(acc))
         return True, acc, traveled
     else:
-        # print('\nYou finished the game!\n\nAccumulator value: {0}'.format(acc))
-        return False, acc, traveled
+        print('\nYou finished the game!\n\nAccumulator value: {0}'.format(acc))
+        return False
 
 def bad_jmp_nop(lst):
     ilist = jn_lst(lst)
+
 
     for i in ilist:
         
@@ -145,7 +146,7 @@ def bad_jmp_nop(lst):
             lst[i][1][0]  = 'jmp'
 
         if not ins(lst):
-            return loop, acc
+            break
         else:
             if lst[i][1][0]  == 'jmp':
                 lst[i][1][0] = 'nop'
@@ -169,14 +170,13 @@ def jn_lst(lst):
 
 if __name__ == "__main__":
 
-    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day8\test_data.txt'
+    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day8\move_data.txt'
 
     with open( input, 'r') as f:
         # mlist = list(enumerate(tuple(i.split()) for i in f.read().split('\n')))
         mlist = [row for row in enumerate(csv.reader(f, delimiter = ' '))]
 
-    # loop, accumulator, blist = ins(mlist)
+    # loop, accumulator, trvlst = ins(mlist)
     # print('Infinite Loop Condition: {0}\tAccumulator Value: {1}'.format(loop, accumulator))
     
-    loop,accumulator = bad_jmp_nop(mlist)
-    # print('Infinite Loop Condition: {0}\tAccumulator Value: {1}'.format(loop, accumulator))
+    bad_jmp_nop(mlist)
