@@ -1,0 +1,60 @@
+ """    s_idx = 0
+    e_idx = len(lst)
+    m_idx = (e_idx - s_idx) // 2
+    offset = 2
+    visited = []
+  """
+
+   
+    # while True:
+    #     p_list = []
+    #     for i in range(m_idx, e_idx):
+    #         p_list.append(lst[i])
+
+    #         if sum(p_list) == val:
+    #             return (min(p_list) + max(p_list))
+    #         elif sum(p_list) > val:
+    #             break
+
+    #     if sum(p_list) > val:
+    #         m_idx = (m_idx - s_idx) // 2
+    #     elif sum(p_list) < val:
+    #         m_idx = (e_idx - m_idx) // 2
+
+ """    while True:
+        search_min = m_idx - offset
+        search_max = m_idx + offset
+        visited.append(m_idx)
+        
+        if sum(lst[search_min:search_max]) > val:
+            m_idx = ((m_idx - s_idx) // 2)
+        elif sum(lst[search_min:search_max]) < val:
+            m_idx = m_idx + ((e_idx - m_idx) // 2)
+        elif sum(lst[search_min:search_max]) == val:
+            return (min(p_list) + max(p_list))
+
+        if m_idx in visited:
+            search_min = m_idx - 2 * offset
+            search_max = m_idx + 2 * offset
+
+
+            while True:
+                if sum(lst[search_min:search_max]) > val:
+                    
+                elif sum(lst[search_min:search_max]) < val:
+                    min_offset += 1
+                elif sum(lst[search_min:search_max]) == val:
+                    return (min(p_list) + max(p_list)) """
+            
+    # for i in range(len(lst) - 1):
+    #     min = 0
+    #     max = i + 1
+
+    #     if sum(lst[min:max]) < val:
+    #         max += 1
+    #     if sum(lst[min:max]) > val:
+    #         min += 1
+    #     if sum(lst[min:max]) == val:
+    #         return (lst(min) + (lst(max)))
+
+        
