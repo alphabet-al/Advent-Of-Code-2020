@@ -1,8 +1,8 @@
-string = '+13'
-acc = 0
+lst = ['1','2','3','4','5']
+mlist = lst.copy()
 
-value = int(string)
+mlist[0] = '15'
 
-acc += value
+print(mlist)
 
-print(acc)
+print(lst)

@@ -51,11 +51,14 @@ Immediately before the program would run an instruction a second time, the value
 Run your copy of the boot code. Immediately before any instruction is executed a second time, what value is in the accumulator?
 
 --- Part Two ---
+
 After some careful analysis, you believe that exactly one instruction is corrupted.
 
-Somewhere in the program, either a jmp is supposed to be a nop, or a nop is supposed to be a jmp. (No acc instructions were harmed in the corruption of this boot code.)
+Somewhere in the program, either a jmp is supposed to be a nop, or a nop is supposed to be a jmp. (No acc instructions were harmed in the 
+corruption of this boot code.)
 
-The program is supposed to terminate by attempting to execute an instruction immediately after the last instruction in the file. By changing exactly one jmp or nop, you can repair the boot code and make it terminate correctly.
+The program is supposed to terminate by attempting to execute an instruction immediately after the last instruction in the file. By changing 
+exactly one jmp or nop, you can repair the boot code and make it terminate correctly.
 
 For example, consider the same program from above:
 
@@ -68,7 +71,9 @@ acc -99
 acc +1
 jmp -4
 acc +6
-If you change the first instruction from nop +0 to jmp +0, it would create a single-instruction infinite loop, never leaving that instruction. If you change almost any of the jmp instructions, the program will still eventually find another jmp instruction and loop forever.
+
+If you change the first instruction from nop +0 to jmp +0, it would create a single-instruction infinite loop, never leaving that instruction. 
+If you change almost any of the jmp instructions, the program will still eventually find another jmp instruction and loop forever.
 
 However, if you change the second-to-last instruction (from jmp -4 to nop -4), the program terminates! The instructions are visited in this order:
 
@@ -81,9 +86,11 @@ acc -99 |
 acc +1  | 4
 nop -4  | 5
 acc +6  | 6
-After the last instruction (acc +6), the program terminates by attempting to run the instruction below the last instruction in the file. With this change, after the program terminates, the accumulator contains the value 8 (acc +1, acc +1, acc +6).
+After the last instruction (acc +6), the program terminates by attempting to run the instruction below the last instruction in the file. 
+With this change, after the program terminates, the accumulator contains the value 8 (acc +1, acc +1, acc +6).
 
-Fix the program so that it terminates normally by changing exactly one jmp (to nop) or nop (to jmp). What is the value of the accumulator after the program terminates?
+Fix the program so that it terminates normally by changing exactly one jmp (to nop) or nop (to jmp). What is the value of the accumulator 
+after the program terminates?
 '''
 #############################################################################################################################################
 import csv
@@ -121,18 +128,55 @@ def ins(lst):
             current_index = ac_nop(idx, action, value)
     
     if current_index in traveled:
-        print('\nYou are stuck in a Loop!\n\nAccumulator value: {0}'.format(acc))
+        # print('\nYou are stuck in a Loop!\n\nAccumulator value: {0}'.format(acc))
+        return True, acc, traveled
     else:
-        print('\nYou finished the game!\n\nAccumulator value: {0}'.format(acc))
+        # print('\nYou finished the game!\n\nAccumulator value: {0}'.format(acc))
+        return False, acc, traveled
+
+def bad_jmp_nop(lst):
+    ilist = jn_lst(lst)
+
+    for i in ilist:
+        
+        if lst[i][1][0]  == 'jmp':
+            lst[i][1][0] = 'nop'
+        elif lst[i][1][0] == 'nop':
+            lst[i][1][0]  = 'jmp'
+
+        if not ins(lst):
+            return loop, acc
+        else:
+            if lst[i][1][0]  == 'jmp':
+                lst[i][1][0] = 'nop'
+            elif lst[i][1][0] == 'nop':
+                lst[i][1][0]  = 'jmp'
 
 
+def jn_lst(lst):
+    lp, ac, trav_list = ins(lst)
+    jmp_nop_list = []
+
+    for i in trav_list:
+        if lst[i][1][0] == 'jmp' or lst[i][1][0] == 'nop':
+            jmp_nop_list.append(i)
+    
+    return jmp_nop_list
+
+
+
+     
 
 if __name__ == "__main__":
 
-    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day8\move_data.txt'
+    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day8\test_data.txt'
 
     with open( input, 'r') as f:
         # mlist = list(enumerate(tuple(i.split()) for i in f.read().split('\n')))
         mlist = [row for row in enumerate(csv.reader(f, delimiter = ' '))]
 
-    ins(mlist)
+    # loop, accumulator, blist = ins(mlist)
+    # print('Infinite Loop Condition: {0}\tAccumulator Value: {1}'.format(loop, accumulator))
+    
+    loop,accumulator = bad_jmp_nop(mlist)
+    # print('Infinite Loop Condition: {0}\tAccumulator Value: {1}'.format(loop, accumulator))
