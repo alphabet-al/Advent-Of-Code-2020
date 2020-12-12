@@ -144,13 +144,12 @@ What is the total number of distinct ways you can arrange the adapters to connec
 """
 
 #########################################################################################################################################################
+from itertools import combinations as com
 
 #  start at 0, for each element in the list compare current value with previous value 
 # if difference is 1, store in diff1 list, if difference is 3, store in diff3 list
 # count number of values in each list and return
-# 
-# 
-# 
+
 def adapter_chain(data):
     diff1 = []
     diff2 = []
@@ -169,6 +168,76 @@ def adapter_chain(data):
     return len(diff1), len(diff2), len(diff3) + 1
 
 
+# eval list, sort variable & fixed elements into lists
+# run combinations on all variable numbers 
+# join each combination to fixed list & eval condition
+# if true add to final list
+# count list
+
+def permutation(lst):
+    v_list, f_list = pare_list(lst)
+    combinations = combo(v_list)
+    final_list = []
+    full_list = v_list + f_list + [0,]
+    full_list.sort()
+    sorted_f_list = [0,] + f_list
+    sorted_f_list.sort()
+    
+    final_list.append(full_list)
+
+    for group in combinations:
+        for subs in group:
+            check_list = f_list + list(subs) + [0,]
+            check_list.sort()
+
+            if check(check_list):
+                final_list.append(check_list)
+
+    if check(sorted_f_list):
+        final_list.append(sorted_f_list)
+    
+    return len(final_list)
+
+
+def pare_list(lst):
+    v_list = []
+    f_list = []
+    current = 0
+
+
+    for i in range(len(lst) - 1):
+        diff1 = lst[i] - current
+        diff2 = lst[i+1] - current
+
+        if diff1 <= 2 and diff2 <= 3:
+            v_list.append(lst[i])
+        elif diff1 < 2 and diff2 > 3:
+            f_list.append(lst[i])
+        elif diff1 == 3:
+            f_list.append(lst[i])
+        
+        current = lst[i]
+    
+    f_list.append(lst[-1])
+    device_adapter = lst[-1] + 3
+    f_list.append(device_adapter)
+    
+    return v_list, f_list
+
+def combo(v_list):
+    combinations = [com(v_list,i) for i in range(1, len(v_list))]
+    return combinations
+
+def check(check_list):
+    for i in range(len(check_list) - 1):
+        diff1 = check_list[i+1] - check_list[i] 
+
+        if diff1 > 3:
+            return False
+        else:
+            continue
+
+    return True
 
 
 
@@ -182,6 +251,7 @@ if __name__ == "__main__":
         data = [int(i) for i in f.read().split()]
         data.sort()
 
-    x,y,z = adapter_chain(data)
-    print('1 Jolt differences: {x}\t 2 Jolt differences: {y}\t 3 Jolt differences: {z}\t Product: {product}'.format(x=x,y=y,z=z, product = x*z))
-   
+    # x,y,z = adapter_chain(data)
+    # print('1 Jolt differences: {x}\t 2 Jolt differences: {y}\t 3 Jolt differences: {z}\t Product: {product}'.format(x=x,y=y,z=z, product = x*z))
+
+    print('{0} distinct arrangements'.format(permutation(data)))
