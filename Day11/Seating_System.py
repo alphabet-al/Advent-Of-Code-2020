@@ -102,7 +102,7 @@ def occupado(data):
     while old_occupied_seat_count != current_occupied_seat_count:
         adj_dict = init_adjacency(old_map) # function to initialize adjacency map
         current_map = update_map(old_map, current_map, adj_dict)
-        print_map(current_map)
+        # print_map(current_map) # debug instruction
         old_occupied_seat_count = current_occupied_seat_count
         current_occupied_seat_count = count_occupied_seats(current_map)
         print('{0} number of occupied seats at the end of round # {1}'\
@@ -137,9 +137,9 @@ def init_adjacency(old_map):
     
 def check_adjacency(y_coor, x_coor, adj_dict):
     adj_pointers = [( -1, -1 ), ( 0, -1 ), ( 1, -1 ), ( -1, 0 ), ( 1, 0 ), ( -1, 1 ), ( 0, 1 ), ( 1, 1 ) ]
+    adj_counter = 0
 
     for i in adj_pointers:
-        adj_counter = 0
         key_to_lookup = (y_coor + i[0], x_coor + i[1])
         if key_to_lookup in adj_dict:
             adj_counter += adj_dict[(y_coor + i[0], x_coor + i[1])]
@@ -160,15 +160,13 @@ def update_map(old_map, current_map, adj_dict):
             elif old_map[row][col] == '#' and adj_counter >= 4:
                 current_map[row][col] = 'L'
 
-    old_map = current_map[:]
-
     return current_map
 
 def count_occupied_seats(current_map):
     count = 0
     for i in current_map:
-        if i == '#':
-            count += 1
+        # if i == '#':
+            count += i.count('#')
     return count
  
 
