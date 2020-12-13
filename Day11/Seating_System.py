@@ -93,13 +93,31 @@ Simulate your seating area by applying the seating rules repeatedly until no sea
 """
 
 def occupado(data):
-    map = data
-    old_map = map.copy()
+    current_map = data[:]
+    old_map = current_map[:]
+    old_occupied_seat_count = 0
+    current_occupied_seat_count = None
+    number_of_rounds = 1
 
-    adj_dict = init_adjacency(old_map) # function to initialize adjacency map
-    check_adjacency(0, 0, adj_dict)
+    while old_occupied_seat_count != current_occupied_seat_count:
+        adj_dict = init_adjacency(old_map) # function to initialize adjacency map
+        current_map = update_map(old_map, current_map, adj_dict)
+        print_map(current_map)
+        old_occupied_seat_count = current_occupied_seat_count
+        current_occupied_seat_count = count_occupied_seats(current_map)
+        print('{0} number of occupied seats at the end of round # {1}'\
+                         .format(current_occupied_seat_count, number_of_rounds))
+        number_of_rounds += 1
+        old_map = current_map[:]
+        
+  
 
     
+
+def print_map(current_map):
+    for i in current_map:
+        temp =  ''.join(i)
+        print (temp)
 
 def init_adjacency(old_map):
     adj_dict = {}
@@ -124,44 +142,35 @@ def check_adjacency(y_coor, x_coor, adj_dict):
         adj_counter = 0
         key_to_lookup = (y_coor + i[0], x_coor + i[1])
         if key_to_lookup in adj_dict:
-            adj_counter += adj_dict.get(y_coor + i[0], x_coor + i[1])
+            adj_counter += adj_dict[(y_coor + i[0], x_coor + i[1])]
         else:
             continue
 
     return adj_counter
 
-def update_map(map):
-    pass
-            
+def update_map(old_map, current_map, adj_dict):
+    row_length = len(current_map)
+    col_length = len(current_map[0])
 
+    for row in range(row_length):
+        for col in range(col_length):
+            adj_counter = check_adjacency(row,col, adj_dict)
+            if old_map[row][col] == 'L' and adj_counter == 0:
+                current_map[row][col] = '#'
+            elif old_map[row][col] == '#' and adj_counter >= 4:
+                current_map[row][col] = 'L'
 
+    old_map = current_map[:]
 
+    return current_map
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def count_occupied_seats(current_map):
+    count = 0
+    for i in current_map:
+        if i == '#':
+            count += 1
+    return count
+ 
 
 
 if __name__ == "__main__":
@@ -169,12 +178,13 @@ if __name__ == "__main__":
     input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day11\input.txt'
 
     with open(input, 'r') as f:
-        data = [i.strip() for i in f.readlines()]
+        data = [list(i.strip()) for i in f.readlines()]
 
-        for i in data:
-            print(i)
+        # for i in data:
+        #     print(i)
+
 
     occupado(data)
-    
+ 
 
     
