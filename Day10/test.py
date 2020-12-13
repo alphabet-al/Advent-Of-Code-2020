@@ -1,26 +1,39 @@
-from itertools import combinations as com
-y = [16, 34, 56]
-x = [5, 6, 11]
-combinations = [com(x,i) for i in range(1, len(x))]
-# combinations = []
+# from itertools import combinations as com
 
-# for i in range(2, len(x)):
-#     y = list(com(x,i))
-#     combinations.append(y)
+# input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day10\input.txt'
 
-print(combinations)
-# y = com(x,2)
+# with open(input, 'r') as f:
+#     data = [int(i) for i in f.read().split()]
+#     data.sort()
 
-# z = [i for i in y]
+# combinations = [list(com(data,i)) for i in range(1, 5)]
 
-# print(z)
+# for i in combinations:
+#     print(len(i)) 
 
-# print(list(z[0]))
+       
 
-# mod = x + list(z[0])
-# print(mod)
-for i in combinations:
-    for j in i:
-        check_list = y + list(j)
-        print(check_list)
-        
+ef_cache = {}
+
+def expensive_func(num):
+    if num in ef_cache:
+        return ef_cache[num]
+
+    print("Computing {}....".format(num))
+    result = num * num
+    ef_cache[num] = result
+    return result
+
+result = expensive_func(4)
+print(result)
+
+result = expensive_func(10)
+print(result)
+
+result = expensive_func(4)
+print(result)
+
+result = expensive_func(10)
+print(result)
+
+print(ef_cache)
