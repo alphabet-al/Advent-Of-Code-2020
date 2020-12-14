@@ -1,7 +1,11 @@
-import re
+waypoint = 10 + 1j
+x = 1
+y = 1
 
-s='f10'
+e2 = 10
 
-x = re.findall('\d+|\D+', s)
+waypoint = waypoint + complex(0,e2)
+print(waypoint.real, waypoint.imag)
 
-print(x)
+x += waypoint.real * e2
+print(x,y)
