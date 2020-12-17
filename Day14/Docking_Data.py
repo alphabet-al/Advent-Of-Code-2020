@@ -91,11 +91,26 @@ The entire 36-bit address space still begins initialized to the value 0 at every
 Execute the initialization program using an emulator for a version 2 decoder chip. What is the sum of all values left in memory after it completes?
 """
 import re 
-import csv
 from collections import deque
+import itertools
+
+def docking_prog_v2(data):
+    mem_dict = {}
+
+    for list_length in range(len(data)):
+        key_val, data_val = get_val(data)
+
+        if 'mask' in key_val:
+            mask = store_mask(key_val, data_val)
+
+        elif 'mem' in key_val:
+            key_val, bin_memory = store_bin_key(key_val, data_val)
+            result, float_count = eval_bitmask_v2(mask, bin_memory)
+            mem_dict = all_pos_val(result, float_count, data_val, mem_dict)
+
+    return sum(mem_dict.values())        
 
 def docking_prog(data):
-    bin_val = False
     mem_dict = {}
 
     for list_length in range(len(data)):
@@ -111,10 +126,6 @@ def docking_prog(data):
         
     
     return sum(mem_dict.values())
-
-
-
-
    
 def get_val(data):
     val = data.popleft()
@@ -131,17 +142,18 @@ def store_mask(key_val, data_val):
 
 def store_kbit(key_val, data_val):
 
-    if 'mask' in key_val:
-        bin_val = False
-    else:
-        bin_val = format(int(data_val), '036b')
+    bin_val = format(int(data_val), '036b')
 
     return key_val, bin_val
-        
+
+def store_bin_key(key_val, data_val):
+    mem_num = (re.findall(r'\d+', key_val))
+    bin_memory = format(int(mem_num[0]), '036b')
+
+    return key_val, bin_memory
 
 def eval_bitmask(mask, bin_val, key_val):
     result = deque()
-    # bin_val = '000000000000000000000000000000001011'
 
     for bit in reversed(range(len(mask))):
 
@@ -152,6 +164,54 @@ def eval_bitmask(mask, bin_val, key_val):
             result.appendleft(mask[bit])
 
     return int(''.join(result),2)
+
+def eval_bitmask_v2(mask, bin_memory):
+    result = []
+    float_count = 0
+
+    for bit in reversed(range(len(mask))):
+
+        if mask[bit] == 'X':
+            result.append(mask[bit])
+            float_count += 1
+        
+        elif mask[bit] == '0':
+            result.append(bin_memory[bit])
+        
+        elif mask[bit] == '1':
+            result.append(mask[bit])
+        
+    result.reverse()
+
+    return result, float_count
+
+def all_pos_val(result, float_count, data_val, mem_dict):
+
+    permutation_deque = deque()
+    lst = list(itertools.product([0, 1], repeat=float_count))
+    old_result = result.copy()
+    permutation_list = []
+    
+    for i in lst:
+        for j in i:
+            permutation_deque.append(j)
+
+
+    for i in range(len(lst)):
+        result = old_result.copy()
+        for i_val in reversed(range(len(result))):
+            if result[i_val] == 'X':
+                result[i_val] = str(permutation_deque.popleft())
+
+        permutation_list.append(result)
+    
+    for i in permutation_list:
+        mem_dict[int(''.join(i),2)] = int(data_val)
+
+    return mem_dict
+       
+                 
+
 
 
 
@@ -167,5 +227,6 @@ if __name__ == "__main__":
             queue.append(i)
 
         
-    print('Sum of all values left in memory: {0}'.format(docking_prog(queue)))
+    # print('Sum of all values left in memory: {0}'.format(docking_prog(queue)))
+    print('Sum of all values left in memory: {0}'.format(docking_prog_v2(queue)))
    
