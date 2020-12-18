@@ -122,18 +122,6 @@ def check_tix(tix_dict, missing_num, min_v, max_v):
                         invalid_num.append(i)
                         pop_list.append(git)
     
-
-
-    # ticket_values = list(tix_dict.values())
-    # ticket_values = flatten(ticket_values)
-
-    # ticket_values.sort()
-
-    # for i in ticket_values:
-    #     if i < min_v or i > max_v:
-    #         invalid_num.append(i)
-
- 
     if 'your ticket' in tix_dict:
         for i in tix_dict.get('your ticket'):
             if i < min_v or i > max_v:
@@ -149,19 +137,25 @@ def check_tix(tix_dict, missing_num, min_v, max_v):
 
     return sum(invalid_num) , pop_list
 
-def flatten(A):
-    rt = []
-    for i in A:
-        if isinstance(i,list): 
-            rt.extend(flatten(i))
-        else: rt.append(i)
-    return rt    
-
 def delete_invalid(tix_dict, pop_list):
     for i in pop_list:
         tix_dict.pop(i)
 
+    tix_dict[0] = tix_dict.get('your ticket') # re assign 'your ticket' key to key 0 for better data handling in pt2
+    tix_dict.pop('your ticket')
+
     return tix_dict
+
+# def field_search(upd_tix_dict, crit_dict):   part 2....
+#     field = {}
+
+#     for i,v in upd_tix_dict.items():
+#         for k in v:
+#             for x,y in crit_dict.items():
+#                 if k in y[0] or k in y[1]:
+#                     field[x] = (i, v.index(k))
+
+    print(field)
 
 def scan_ticket(data):
     criteria = data[0].split('\n')
@@ -173,12 +167,13 @@ def scan_ticket(data):
     tix_dict = tix(my_tix, nearby_tix)
     error_rate, pop_list = check_tix(tix_dict, missing_num, min_v, max_v)
     upd_tix_dict = delete_invalid(tix_dict, pop_list)
+    field_search(upd_tix_dict, crit_dict)
 
     return error_rate
 
 
 if __name__ == "__main__":
-    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day16\input.txt'
+    input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day16\t_input.txt'
 
     with open(input, 'r') as f:
         data = f.read().split('\n\n')
