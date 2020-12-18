@@ -37,6 +37,28 @@ nearby tickets:
 It doesn't matter which position corresponds to which field; you can identify invalid nearby tickets by considering only whether tickets contain values that are not valid for any field. In this example, the values on the first nearby ticket are all valid for at least one field. This is not true of the other three nearby tickets: the values 4, 55, and 12 are are not valid for any field. Adding together all of the invalid values produces your ticket scanning error rate: 4 + 55 + 12 = 71.
 
 Consider the validity of the nearby tickets you scanned. What is your ticket scanning error rate? 
+
+--- Part Two ---
+Now that you've identified which tickets contain invalid values, discard those tickets entirely. Use the remaining valid tickets to determine which field is which.
+
+Using the valid ranges for each field, determine what order the fields appear on the tickets. The order is consistent between all tickets: if seat is the third field, it is the third field on every ticket, including your ticket.
+
+For example, suppose you have the following notes:
+
+class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9
+Based on the nearby tickets in the above example, the first position must be row, the second position must be class, and the third position must be seat; you can conclude that in your ticket, class is 12, row is 11, and seat is 13.
+
+Once you work out which field is which, look for the six fields on your ticket that start with the word departure. What do you get if you multiply those six values together?
 """
 import re
 
@@ -75,35 +97,57 @@ def tix(my_tix, nearby_tix):
 
     my_tname = my_tix[0].split(':')[0]
     my_tvalues = [int(ele) for ele in my_tix[1].split(',')]
+    tix_dict[my_tname] = my_tvalues
 
     nearby_tname = nearby_tix[0].split(':')[0]
-    nearby_tvalues = [int(j) for ele in nearby_tix[1:] for j in ele.split(',')]
-
-    tix_dict[my_tname] = my_tvalues
-    tix_dict[nearby_tname] = nearby_tvalues
     
+    for r in range(1, len(nearby_tix[1:]) + 1):
+        tix_dict[r] = [int(i) for i in nearby_tix[r].split(',')]
+
+
     return tix_dict
 
 def check_tix(tix_dict, missing_num, min_v, max_v):
     invalid_num = []
+    pop_list = []
 
     if len(missing_num) != 0:
         for i in missing_num:
             if i in tix_dict.get('your ticket'):
                 invalid_num.append(i)
-            elif i in tix_dict.get('nearby tickets'):
+                pop_list.append('your ticket')
+            else:
+                for git in range(1, len(tix_dict)):
+                    if i in tix_dict.get(git):
+                        invalid_num.append(i)
+                        pop_list.append(git)
+    
+
+
+    # ticket_values = list(tix_dict.values())
+    # ticket_values = flatten(ticket_values)
+
+    # ticket_values.sort()
+
+    # for i in ticket_values:
+    #     if i < min_v or i > max_v:
+    #         invalid_num.append(i)
+
+ 
+    if 'your ticket' in tix_dict:
+        for i in tix_dict.get('your ticket'):
+            if i < min_v or i > max_v:
                 invalid_num.append(i)
-            
-    ticket_values = list(tix_dict.values())
-    ticket_values = flatten(ticket_values)
+                pop_list.append('your ticket')
 
-    ticket_values.sort()
+    for r in range(1, len(tix_dict.keys())):
+        for i in tix_dict.get(r):
+            if i < min_v or i > max_v:
+                invalid_num.append(i)
+                if r not in pop_list:
+                    pop_list.append(r)               
 
-    for i in ticket_values:
-        if i < min_v or i > max_v:
-            invalid_num.append(i)
-
-    return sum(invalid_num)
+    return sum(invalid_num) , pop_list
 
 def flatten(A):
     rt = []
@@ -113,6 +157,12 @@ def flatten(A):
         else: rt.append(i)
     return rt    
 
+def delete_invalid(tix_dict, pop_list):
+    for i in pop_list:
+        tix_dict.pop(i)
+
+    return tix_dict
+
 def scan_ticket(data):
     criteria = data[0].split('\n')
     my_tix = data[1].split('\n')
@@ -121,8 +171,8 @@ def scan_ticket(data):
     crit_dict = rules(criteria)
     missing_num, min_v, max_v = absent_values(crit_dict)
     tix_dict = tix(my_tix, nearby_tix)
-    error_rate = check_tix(tix_dict, missing_num, min_v, max_v)
-
+    error_rate, pop_list = check_tix(tix_dict, missing_num, min_v, max_v)
+    upd_tix_dict = delete_invalid(tix_dict, pop_list)
 
     return error_rate
 
