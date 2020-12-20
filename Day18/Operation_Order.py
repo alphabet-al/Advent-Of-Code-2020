@@ -136,6 +136,19 @@ def sub_paren(data, pattern_RE, paren_fields_math):
     
     return x
 
+def sub_x(pattern_RE, data, ans):
+
+    if re.search(pattern_RE, data) != None:
+
+        x = re.sub(pattern_RE, 'X', data, 1)
+        x = x.replace('X', str(ans))
+    
+    else:
+
+        x = ans
+
+    
+    return x
 
 def do_math(data):
     
@@ -162,15 +175,76 @@ def do_math(data):
 
     return answer
 
-def loop_list(data):
+def add(dataset):
+    split_string = dataset.replace('(', '')
+    split_string = split_string.replace(')', '')
+    split_string = split_string.split()
+    tv1 = tv2 = val = sign = None
+    
+    for char in split_string:
+
+        tv1, tv2, val, sign = evaluate_char(char, tv1, tv2, val, sign)
+
+    val = tv1
+
+    return val
+    
+
+
+        
+
+
+def do_adv_math(data):
+    pattern_RE_paren = re.compile(r'\(([^()]+)\)')
+    pattern_RE_add = re.compile(r'(\d+\s\+\s\d+)')
+    pattern_RE_multiply = re.compile(r'(\d+\s\*\s\d+)')
+      
+    while not isinstance(data, int):
+
+        data = re_check(data, pattern_RE_paren, pattern_RE_add, pattern_RE_multiply)
+    
+    return data
+
+def re_check(data, pattern_RE_paren, pattern_RE_add, pattern_RE_multiply):
+
+    while re.search(pattern_RE_add, data):
+        match = re.search(pattern_RE_add, data)
+        sum_ans = add(match.group(0))
+        data = sub_x(pattern_RE_add, data, sum_ans)
+
+    if re.search(pattern_RE_paren, data):
+        match = re.search(pattern_RE_paren, data)
+        sum_ans = add(match.group(0))
+        data = sub_x(pattern_RE_paren, data, sum_ans)
+
+    if re.search(pattern_RE_add, data) or re.search(pattern_RE_paren, data):
+        pass
+    elif re.search(pattern_RE_multiply, data):
+        data = add(data)
+    else:
+        data = int(data)
+        
+
+    return data
+
+    
+
+def loop_list(data, advance = False):
     counter = 0
 
     for i in data:
-    
-        x = do_math(i)
-        counter += x
+        if advance == False:
+
+            x = do_math(i)
+            counter += x
+
+        elif advance == True:
+
+            x = do_adv_math(i)
+            counter += x
 
     return counter
+
   
 if __name__ == "__main__":
     input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day18\input.txt'
@@ -179,4 +253,5 @@ if __name__ == "__main__":
         data = f.read().split('\n')
         # data = [i.replace(' ', '') for i in data]
 
-    print('Sum Of Values: {0}'.format(loop_list(data)))
+    print('Sum Of Values: {0}'.format(loop_list(data, advance = True)))
+
