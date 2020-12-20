@@ -33,100 +33,150 @@ Here are a few more examples:
 ((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2 becomes 13632.
 Before you can help with the homework, you need to understand it yourself. Evaluate the expression on each line of the homework; what is the sum of the resulting values?
 
+--- Part Two ---
+
+You manage to answer the child's questions and they finish part 1 of their homework, but get stuck when they reach the next section: advanced math.
+
+Now, addition and multiplication have different precedence levels, but they're not the ones you're familiar with. Instead, addition is evaluated before multiplication.
+
+For example, the steps to evaluate the expression 1 + 2 * 3 + 4 * 5 + 6 are now as follows:
+
+1 + 2 * 3 + 4 * 5 + 6
+  3   * 3 + 4 * 5 + 6
+  3   *   7   * 5 + 6
+  3   *   7   *  11
+     21       *  11
+         231
+Here are the other examples from above:
+
+1 + (2 * 3) + (4 * (5 + 6)) still becomes 51.
+2 * 3 + (4 * 5) becomes 46.
+5 + (8 * 3 + 9 + 3 * 4 * 3) becomes 1445.
+5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4)) becomes 669060.
+((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2 becomes 23340.
+What do you get if you add up the results of evaluating the homework problems using these new rules?
+
+ 
 """
+import re
 from collections import deque
 
-def reset_val(val, tv1, tv2, sign):
-    tv1 = val
-    sign = tv2 = None
+def final_math(parse_data):
+    parse_data = parse_data.split()
 
-    return tv1, tv2, sign
+    tv1 = tv2 = val = sign = None
 
-def do_math(data):
-    total = 0   
+    for char in parse_data:
 
-    for line in data:
-   
-        mem = deque()
-        mem_sign = deque()
-        tv1 = None
-        paren = 0
-        val = None
-        sign = None
+        # if char != 'X':
+
+            tv1, tv2, val, sign = evaluate_char(char, tv1, tv2, val, sign)
+
+        # elif char == 'X':
+        #     tv2 = paren_fields_math.popleft()
+        #     tv1, tv2, val, sign = evaluate_char(char, tv1, tv2, val, sign)
+
+    return val
+    
+
+def paren_math(paren_fields):
+    # paren_fields = paren_fields[0].split()
+    lst = deque()
+
+    for grp in paren_fields:
         
-        for char in line:
+        grp = grp.split()
+        tv1 = tv2 = val = sign = None
+    
+        for char in grp:
 
-            if char == '(':
+            tv1, tv2, val, sign = evaluate_char(char, tv1, tv2, val, sign)
 
-                if tv1:
-                    mem.appendleft(tv1)                   
-                if sign:
-                    mem_sign.appendleft(sign)
-                    tv1 = tv2 = sign = None
+        lst.append(val)
+        
+    return lst
 
 
-                paren += 1 
 
-            elif char == ')':
+def evaluate_char(char, tv1, tv2, val, sign):
 
-                if tv1:
-                    mem.appendleft(tv1)
-                    tv1, tv2, sign = reset_val(val, tv1, tv2, sign)
-                    tv1 = None
-                
-                paren -= 1
-
-                if len(mem) > 1 and len(mem_sign) > 0:
-                    sign = mem_sign.popleft()
-                    tv2 = mem.popleft()
-                    tv1 = mem.popleft()
-
-                    if sign == '+':
-                        val = tv1 + tv2
-                        tv1 = val
-
-                    elif sign == '*':
-                        val = tv1 * tv2
-                        tv1 = val
-                
-                if len(mem) != 0 and paren == 0:
-                    tv1 = mem.popleft()
-                 
-                
-            elif char == '+' or char == '*':
+    if char == '+' or char == '*':
                 sign = char
 
+    elif char.isdigit() and tv1 == None:
 
-            elif char.isdigit() and tv1 == None:
+        tv1 = int(char)
 
-                tv1 = int(char)
-
-            elif char.isdigit() and tv1:
-
-                tv2 = int(char)
-
-                if tv1 and tv2 and sign:
-
-                    if sign == '+':
-                        val = tv1 + tv2
-                        tv1, tv2, sign = reset_val(val, tv1, tv2, sign)
-
-                    elif sign == '*':
-                        val = tv1 * tv2
-                        tv1, tv2, sign = reset_val(val, tv1, tv2, sign)
-
+    elif (char.isdigit() and tv1):
         
-                    
-        total += val
-                        
-                        
-    return total            
-            
+        if char.isdigit():
+            tv2 = int(char)
+
+        if tv1 and tv2 and sign:
+
+            if sign == '+':
+                val = tv1 + tv2
+                tv1 = val
+                tv2 = sign = None
+
+            elif sign == '*':
+                val = tv1 * tv2
+                tv1 = val
+                tv2 = sign = None
+
+    return tv1, tv2, val, sign
+
+def sub_paren(data, pattern_RE, paren_fields_math):
+    x = re.sub(pattern_RE, 'X', data)
+    iter = range(len(paren_fields_math))
+
+    for i in iter:
+        x = x.replace('X', str(paren_fields_math.popleft()), 1)
+
+    
+    return x
+
+
+def do_math(data):
+    
+    pattern_RE = re.compile(r'\(([^()]+)\)')
+
+    paren_fields = [grp for grp in re.findall(pattern_RE, data)]
+    parse_data = ''
+
+    if paren_fields:
+        paren_fields_math = paren_math(paren_fields)
+        parse_data = sub_paren(data, pattern_RE, paren_fields_math)
+  
+    
+
+        while re.findall(pattern_RE, parse_data):
+            paren_fields = [grp for grp in re.findall(pattern_RE, parse_data)]
+            paren_fields_math = paren_math(paren_fields)
+            parse_data = sub_paren(parse_data, pattern_RE, paren_fields_math)
+
+    if parse_data:
+        answer = final_math(parse_data)
+    else:
+        answer = final_math(data)
+
+    return answer
+
+def loop_list(data):
+    counter = 0
+
+    for i in data:
+    
+        x = do_math(i)
+        counter += x
+
+    return counter
+  
 if __name__ == "__main__":
     input = r'C:\Users\alanv\PythonCode\Projects\Advent of Code 2020\Day18\input.txt'
 
     with open(input, 'r') as f:
         data = f.read().split('\n')
-        data = [i.replace(' ', '') for i in data]
-    
-    print('Sum Of Values: {0}'.format(do_math(data)))
+        # data = [i.replace(' ', '') for i in data]
+
+    print('Sum Of Values: {0}'.format(loop_list(data)))
