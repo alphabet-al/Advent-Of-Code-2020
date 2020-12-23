@@ -144,17 +144,18 @@ Starting with your given initial configuration, simulate six cycles. How many cu
 """
 class Cube:
 
-    def __init__(self, y, x, z, state = False):
+    def __init__(self, y, x, z, w, state = False):
         self.y = y
         self.x = x
         self.z = z
+        self.w = w
         self.state = state
 
     def __str__(self):
         return 'Cube class with {} state'.format(self.state)
 
     def __repr__(self):
-        return 'Cube({},{},{},{})'.format(self.y, self.x, self.z, self.state)
+        return 'Cube({},{},{},{})'.format(self.y, self.x, self.z, self.w, self.state)
 
     def change_state(self):
         self.state = not self.state
@@ -171,17 +172,41 @@ class Space:
         self.old_dict = {}
         self.transition = []
 
-        self.search_area = [ (-1,-1,-1), (0,-1,-1), (1,-1,-1),
-                             (-1, 0,-1), (0, 0,-1), (1, 0,-1), # Relative Z - 1 
-                             (-1, 1,-1), (0, 1,-1), (1, 1,-1),
+        self.search_area = [ (-1,-1,-1,-1), (0,-1,-1,-1), (1,-1,-1,-1),
+                             (-1, 0,-1,-1), (0, 0,-1,-1), (1, 0,-1,-1), # 
+                             (-1, 1,-1,-1), (0, 1,-1,-1), (1, 1,-1,-1),
 
-                             (-1,-1, 0), (0,-1, 0), (1,-1, 0),
-                             (-1, 0, 0),            (1, 0, 0), # Relative Z = 0
-                             (-1, 1, 0), (0, 1, 0), (1, 1, 0),
+                             (-1,-1, 0,-1), (0,-1, 0,-1), (1,-1, 0,-1),
+                             (-1, 0, 0,-1), (0, 0, 0,-1), (1, 0, 0,-1), # Relative W - 1
+                             (-1, 1, 0,-1), (0, 1, 0,-1), (1, 1, 0,-1),
                        
-                             (-1,-1, 1), (0,-1, 1), (1,-1, 1),
-                             (-1, 0, 1), (0, 0, 1), (1, 0, 1), # Relative Z + 1
-                             (-1, 1, 1), (0, 1, 1), (1, 1, 1),
+                             (-1,-1, 1,-1), (0,-1, 1,-1), (1,-1, 1,-1),
+                             (-1, 0, 1,-1), (0, 0, 1,-1), (1, 0, 1,-1), #
+                             (-1, 1, 1,-1), (0, 1, 1,-1), (1, 1, 1,-1),
+                            
+                             (-1,-1,-1, 0), (0,-1,-1, 0), (1,-1,-1, 0),
+                             (-1, 0,-1, 0), (0, 0,-1, 0), (1, 0,-1, 0), # 
+                             (-1, 1,-1, 0), (0, 1,-1, 0), (1, 1,-1, 0),
+
+                             (-1,-1, 0, 0), (0,-1, 0, 0), (1,-1, 0, 0),
+                             (-1, 0, 0, 0),               (1, 0, 0, 0), # Relative W = 0
+                             (-1, 1, 0, 0), (0, 1, 0, 0), (1, 1, 0, 0),
+                       
+                             (-1,-1, 1, 0), (0,-1, 1, 0), (1,-1, 1, 0),
+                             (-1, 0, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), # 
+                             (-1, 1, 1, 0), (0, 1, 1, 0), (1, 1, 1, 0),
+                           
+                             (-1,-1,-1, 1), (0,-1,-1, 1), (1,-1,-1, 1),
+                             (-1, 0,-1, 1), (0, 0,-1, 1), (1, 0,-1, 1), # 
+                             (-1, 1,-1, 1), (0, 1,-1, 1), (1, 1,-1, 1),
+
+                             (-1,-1, 0, 1), (0,-1, 0, 1), (1,-1, 0, 1),
+                             (-1, 0, 0, 1), (0, 0, 0, 1), (1, 0, 0, 1), # Relative W + 1
+                             (-1, 1, 0, 1), (0, 1, 0, 1), (1, 1, 0, 1),
+                       
+                             (-1,-1, 1, 1), (0,-1, 1, 1), (1,-1, 1, 1),
+                             (-1, 0, 1, 1), (0, 0, 1, 1), (1, 0, 1, 1), #
+                             (-1, 1, 1, 1), (0, 1, 1, 1), (1, 1, 1, 1),
                             ]
 
     def __str__(self):
@@ -195,14 +220,14 @@ class Space:
         pass
 
 
-    def ini_cube(self, y, x, z, state):
-        key = self.coord_to_key(y, x, z)
-        newCube = Cube(y, x, z, state)
+    def ini_cube(self, y, x, z, w, state):
+        key = self.coord_to_key(y, x, z, w)
+        newCube = Cube(y, x, z, w, state)
         self.dict[key] = newCube
 
 
-    def coord_to_key(self, y, x, z):
-        key = '(' + str(y) + ',' + str(x) + ',' + str(z) + ')'
+    def coord_to_key(self, y, x, z, w):
+        key = '(' + str(y) + ',' + str(x) + ',' + str(z) + str(w) + ')'
         return key
 
 
@@ -212,12 +237,13 @@ class Space:
             y = self.dict[key_val].y + i[0]
             x = self.dict[key_val].x + i[1]
             z = self.dict[key_val].z + i[2]
+            w = self.dict[key_val].w + i[3]
 
-            key = self.coord_to_key(y,x,z)
+            key = self.coord_to_key(y,x,z,w)
 
             if key not in self.old_dict:
 
-                newCube = Cube(y, x, z)
+                newCube = Cube(y, x, z, w)
                 self.dict[key] = newCube
 
     def check_cubes(self, key_val):
@@ -228,8 +254,10 @@ class Space:
             y = self.dict[key_val].y + i[0]
             x = self.dict[key_val].x + i[1]
             z = self.dict[key_val].z + i[2]
+            w = self.dict[key_val].w + i[3]
 
-            key = self.coord_to_key(y,x,z)
+
+            key = self.coord_to_key(y,x,z,w)
 
             if key not in self.dict:
                 pass
@@ -275,14 +303,14 @@ class Space:
 
 
 def load_map(data, uni):
-    z = 0
+    z = w = 0
     
     for row in range(len(data)):
         for column in range(len(data[0])):
             if data[row][column] == '.':
-                uni.ini_cube(row, column, z, state = False)
+                uni.ini_cube(row, column, z, w, state = False)
             elif data[row][column] == '#':
-                uni.ini_cube(row, column, z, state = True)    
+                uni.ini_cube(row, column, z, w, state = True)    
 
 
 
@@ -319,7 +347,7 @@ if __name__ == "__main__":
 
     with open(input, 'r') as f:
         data = f.read().split('\n')
-        cycle_length = 2
+        cycle_length = 6
         
 
     a, b = tesseract(data, cycle_length)
