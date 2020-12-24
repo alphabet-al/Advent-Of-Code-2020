@@ -94,12 +94,12 @@ Determine which two cups will end up immediately clockwise of cup 1. What do you
 from collections import deque
 
 
-data = [1,5,7,6,2,3,9,8,4]
-# data = [3,8,9,1,2,5,4,6,7]
+# data = [1,5,7,6,2,3,9,8,4]
+data = [3,8,9,1,2,5,4,6,7]
 cont = deque()
 temp = []
 destination_cup = None
-moves = 100
+moves = 10000000
 
 
 for i in data:
